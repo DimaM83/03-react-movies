@@ -6,6 +6,8 @@ import { fetchMovies } from './services/movieService';
 import type { Movie } from './types/movie';
 import toast from 'react-hot-toast';
 import MovieModal from './components/MovieModal/MovieModal';
+import Loader from './components/Loader/Loader';
+import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -36,8 +38,8 @@ function App() {
     <>
       <SearchBar onSubmit={handleSearch} />
 
-      {loading && <p>Loading movies, please wait...</p>}
-      {error && <p>There was an error, please try again...</p>}
+      {loading && <Loader />}
+      {error && <ErrorMessage />}
 
       {movies.length > 0 && (
         <MovieGrid
@@ -52,7 +54,6 @@ function App() {
           onClose={() => setSelectedMovie(null)}
         />
       )}
-
 
     </>
   );

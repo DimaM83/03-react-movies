@@ -8,6 +8,9 @@ interface SearchMoviesResponse {
 }
 
 export async function fetchMovies(query: string): Promise<Movie[]> {
+
+  console.log('Токен:', import.meta.env.VITE_TMDB_TOKEN);
+
   const response = await axios.get<SearchMoviesResponse>(`${BASE_URL}/search/movie`, {
     params: {
       query,

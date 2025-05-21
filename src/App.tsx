@@ -1,15 +1,48 @@
-import './App.css'; // временно, потом подключим стили по компонентам
+import { useState } from 'react';
+import './App.css';
 import SearchBar from './components/SearchBar/SearchBar';
+import MovieGrid from './components/MovieGrid/MovieGrid';
+import { fetchMovies } from './services/movieService';
+import type { Movie } from './types/movie';
+import toast from 'react-hot-toast';
 
 function App() {
-  const handleSearch = (query: string) => {
-    console.log('Искать фильмы по ключевому слову:', query);
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleSearch = async (query: string) => {
+    try {
+      setLoading(true);
+      setError(false);
+      const results = await fetchMovies(query);
+
+      if (results.length === 0) {
+        toast.error('No movies found for your request.');
+      }
+
+      setMovies(results);
+    } catch {
+      setError(true);
+      toast.error('Error loading movies. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <SearchBar onSubmit={handleSearch} />
-      {/* позже: MovieGrid, Loader, ErrorMessage, MovieModal */}
+
+      {loading && <p>Loading movies, please wait...</p>}
+      {error && <p>There was an error, please try again...</p>}
+
+      {movies.length > 0 && (
+        <MovieGrid
+          movies={movies}
+          onSelect={(movie) => console.log('Клик по фильму:', movie)}
+        />
+      )}
     </>
   );
 }
